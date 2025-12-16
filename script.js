@@ -1,56 +1,27 @@
-const defaultProducts = [
-    {
-        id: 1,
-        name: "تفاح أحمر طازج",
-        price: 1500,
-        category: "fruit",
-        image: "https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"
-    },
-    {
-        id: 2,
-        name: "برتقال عصيري",
-        price: 1250,
-        category: "fruit",
-        image: "https://images.unsplash.com/photo-1580052614034-c55d20bfee8b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"
-    },
-    {
-        id: 3,
-        name: "طماطم بلدية",
-        price: 1000,
-        category: "vegetable",
-        image: "https://images.unsplash.com/photo-1546470427-f5b9c4c9c5f8?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"
-    },
-    {
-        id: 4,
-        name: "خيار طازج",
-        price: 750,
-        category: "vegetable",
-        image: "https://images.unsplash.com/photo-1449300079323-02e209d9d3a6?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"
-    },
-    {
-        id: 5,
-        name: "موز إكوادوري",
-        price: 1500,
-        category: "fruit",
-        image: "https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"
-    },
-    {
-        id: 6,
-        name: "خس طازج",
-        price: 500,
-        category: "vegetable",
-        image: "https://images.unsplash.com/photo-1556801712-76c8eb07af72?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"
-    }
-];
+// Firebase Configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+    apiKey: "AIzaSyBZI9ufJHW48U8BBct4ObGTSZwGUr3C5ew",
+    authDomain: "alwa-shifta.firebaseapp.com",
+    databaseURL: "https://alwa-shifta-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "alwa-shifta",
+    storageBucket: "alwa-shifta.firebasestorage.app",
+    messagingSenderId: "93576739896",
+    appId: "1:93576739896:web:26621cc82681ad6378bacd",
+    measurementId: "G-3JW8CSCVDG"
+};
 
-// Load from LocalStorage or use Defaults
-let products = JSON.parse(localStorage.getItem('products')) || [];
-
-if (products.length === 0) {
-    products = defaultProducts;
-    localStorage.setItem('products', JSON.stringify(products));
+// Initialize Firebase
+try {
+    firebase.initializeApp(firebaseConfig);
+} catch (e) {
+    console.error("Firebase Init Error:", e);
 }
 
+const db = firebase.database();
+const productsRef = db.ref('products');
+
+let products = [];
 let cart = [];
 
 // DOM Elements
@@ -76,10 +47,19 @@ const checkoutTotalElement = document.getElementById('checkout-total');
 let userLocation = null;
 const SHOP_PHONE = "9647721325805"; // Correct international format (Iraq) w/o +
 
-
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
-    renderProducts(products);
+    // Listen for real-time updates
+    productsRef.on('value', (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+            products = Array.isArray(data) ? data.filter(x => x) : Object.values(data);
+        } else {
+            products = [];
+        }
+        renderProducts(products); // Use the global 'products' array which is now updated
+    });
+
     updateCartUI();
 });
 
