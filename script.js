@@ -58,6 +58,13 @@ document.addEventListener('DOMContentLoaded', () => {
             products = [];
         }
         renderProducts(products); // Use the global 'products' array which is now updated
+    }, (error) => {
+        console.error("Firebase Error:", error);
+        if (error.code === 'PERMISSION_DENIED') {
+            alert("خطأ: لا توجد صلاحية للوصول إلى قاعدة البيانات. يرجى التحقق من قواعد الأمان (Rules) في Firebase.");
+        } else {
+            alert("حدث خطأ أثناء الاتصال بقاعدة البيانات: " + error.message);
+        }
     });
 
     updateCartUI();
@@ -70,7 +77,7 @@ function renderProducts(items) {
             <img src="${product.image}" alt="${product.name}" class="product-img">
             <div class="product-info">
                 <h3>${product.name}</h3>
-                <span class="product-price">${product.price} د.ع / كغم</span>
+                <span class="product-price">${product.price} د.ع / ${product.unit === 'piece' ? 'قطعة' : 'كغم'}</span>
                 <button class="add-to-cart-btn" onclick="addToCart(${product.id})">
                     <i class="fa-solid fa-basket-shopping"></i> أضف للسلة
                 </button>
@@ -97,21 +104,109 @@ filterBtns.forEach(btn => {
     });
 });
 
-// Cart Logic
+// Qty Modal Elements
+const qtyOverlay = document.getElementById('qty-overlay');
+const closeQtyBtn = document.getElementById('close-qty');
+const qtyProductName = document.getElementById('qty-product-name');
+const qtyOptionsKg = document.getElementById('qty-options-kg');
+const qtyOptionsPiece = document.getElementById('qty-options-piece');
+const qtyInputPiece = document.getElementById('qty-input-piece');
+const confirmAddBtn = document.getElementById('confirm-add-btn');
+
+let currentSelectedProduct = null;
+let currentSelectedQty = 0;
+
+// Open Qty Modal (Replaces direct Add)
 window.addToCart = (id) => {
     const product = products.find(p => p.id === id);
-    const existingItem = cart.find(item => item.id === id);
+    if (!product) return;
+
+    currentSelectedProduct = product;
+    qtyProductName.textContent = product.name;
+
+    // Reset UI
+    qtyOverlay.classList.add('open');
+    document.querySelectorAll('.weight-btn').forEach(b => b.classList.remove('selected'));
+
+    if (product.unit === 'piece') {
+        qtyOptionsKg.style.display = 'none';
+        qtyOptionsPiece.style.display = 'block';
+        qtyInputPiece.value = 1;
+        currentSelectedQty = 1;
+    } else {
+        qtyOptionsKg.style.display = 'block';
+        qtyOptionsPiece.style.display = 'none';
+        currentSelectedQty = 0; // User must select
+    }
+
+    // Disable add button until selection (for kg)
+    if (product.unit !== 'piece') {
+        // Optional: could auto select 1kg or disable btn
+        // Let's auto select nothing and wait for user? Or default to 1kg?
+        // User asked "choose quarter, half...", implies active choice.
+    }
+};
+
+window.selectWeight = (weight) => {
+    currentSelectedQty = weight;
+    // Visually update buttons
+    const buttons = document.querySelectorAll('.weight-btn');
+    buttons.forEach(btn => {
+        if (btn.textContent.includes(weight)) { // Simple check, or check value attribute if added
+            btn.classList.add('selected');
+        } else {
+            // We can't easily check float in text without data attribute.
+            // Let's rely on event target closest logic if possible, 
+            // or just strict match if we added data attributes.
+            // Since I didn't add data attributes, I recall text content.
+            // Actually, better way:
+            btn.classList.remove('selected');
+        }
+    });
+    // Add selected class to the clicked one (event bubbling issue if I don't pass event)
+    // Let's use event.target
+    event.target.classList.add('selected');
+};
+
+window.adjustPiece = (delta) => {
+    let val = parseInt(qtyInputPiece.value);
+    val += delta;
+    if (val < 1) val = 1;
+    qtyInputPiece.value = val;
+    currentSelectedQty = val;
+};
+
+// Confirm Add
+confirmAddBtn.addEventListener('click', () => {
+    if (currentSelectedQty <= 0) {
+        showToast("يرجى اختيار الكمية أولاً");
+        return;
+    }
+
+    const product = currentSelectedProduct;
+    const existingItem = cart.find(item => item.id === product.id);
 
     if (existingItem) {
-        existingItem.qty++;
+        existingItem.qty += currentSelectedQty;
+        // Float fix
+        if (product.unit !== 'piece') {
+            existingItem.qty = Math.round(existingItem.qty * 100) / 100;
+        }
     } else {
-        cart.push({ ...product, qty: 1 });
+        cart.push({ ...product, qty: currentSelectedQty });
     }
 
     updateCartUI();
-    openCart();
-};
+    showToast(`تم إضافة ${currentSelectedQty} ${product.unit === 'piece' ? 'قطعة' : 'كغم'} للسلة`);
 
+    qtyOverlay.classList.remove('open');
+});
+
+closeQtyBtn.addEventListener('click', () => {
+    qtyOverlay.classList.remove('open');
+});
+
+// Cart Logic
 function removeFromCart(id) {
     cart = cart.filter(item => item.id !== id);
     updateCartUI();
@@ -120,7 +215,21 @@ function removeFromCart(id) {
 function updateQty(id, change) {
     const item = cart.find(i => i.id === id);
     if (item) {
-        item.qty += change;
+        // Determine step based on unit
+        let step = 1;
+        if (item.unit !== 'piece') {
+            step = 0.25;
+        }
+
+        // If change is positive (add), add step. If negative (remove), subtract step.
+        // The onclick sends 1 or -1. We need to multiply by step.
+        const actualChange = change * step;
+
+        item.qty += actualChange;
+
+        // Fix floating point precision issues (e.g. 0.300000004)
+        item.qty = Math.round(item.qty * 100) / 100;
+
         if (item.qty <= 0) {
             removeFromCart(id);
         } else {
@@ -146,7 +255,7 @@ function updateCartUI() {
                     <span class="cart-item-price">${item.price * item.qty} د.ع</span>
                     <div class="cart-item-controls">
                         <button class="qty-btn" onclick="updateQty(${item.id}, -1)">-</button>
-                        <span>${item.qty}</span>
+                        <span>${item.qty} ${item.unit === 'piece' ? 'قطعة' : 'كغم'}</span>
                         <button class="qty-btn" onclick="updateQty(${item.id}, 1)">+</button>
                         <i class="fa-solid fa-trash remove-item" onclick="removeFromCart(${item.id})"></i>
                     </div>
@@ -255,6 +364,23 @@ confirmOrderBtn.addEventListener('click', () => {
 });
 
 
-// Make functions global for inline onclick handlers
-window.removeFromCart = removeFromCart;
-window.updateQty = updateQty;
+// Toast Function
+function showToast(msg) {
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.innerHTML = `<i class="fa-solid fa-check-circle"></i> ${msg}`;
+    document.body.appendChild(toast);
+
+    // Trigger animation
+    requestAnimationFrame(() => {
+        toast.classList.add('show');
+    });
+
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => {
+            toast.remove();
+        }, 300);
+    }, 3000);
+}
+

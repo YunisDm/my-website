@@ -35,6 +35,7 @@ const pId = document.getElementById('p-id');
 const pName = document.getElementById('p-name');
 const pPrice = document.getElementById('p-price');
 const pCategory = document.getElementById('p-category');
+const pUnit = document.getElementById('p-unit');
 const pImage = document.getElementById('p-image');
 const formTitle = document.getElementById('form-title');
 
@@ -58,6 +59,9 @@ function checkLogin() {
                 products = [];
             }
             renderAdminProducts();
+        }, (error) => {
+            console.error("Firebase Error:", error);
+            alert("خطأ في الاتصال بقاعدة البيانات (المدير): " + error.message);
         });
     } else {
         alert("كلمة المرور خاطئة!");
@@ -90,6 +94,7 @@ function saveProduct() {
     const name = pName.value;
     const price = Number(pPrice.value);
     const category = pCategory.value;
+    const unit = pUnit.value;
     const image = pImage.value || "https://placehold.co/400?text=No+Image";
 
     if (!name || !price) {
@@ -113,13 +118,13 @@ function saveProduct() {
 
         const index = products.findIndex(p => p.id === id);
         if (index !== -1) {
-            productsRef.child(index).update({ name, price, category, image });
+            productsRef.child(index).update({ name, price, category, unit, image });
         }
 
     } else {
         // Add Mode
         const newId = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
-        const newProduct = { id: newId, name, price, category, image };
+        const newProduct = { id: newId, name, price, category, unit, image };
         // We can use the array index as the key for simplicity since we started with an array
         // Or just set the whole list. 
         // Let's use set at specific index to avoid race conditions lightly
@@ -156,7 +161,9 @@ function editProduct(id) {
         pId.value = p.id;
         pName.value = p.name;
         pPrice.value = p.price;
+        pPrice.value = p.price;
         pCategory.value = p.category;
+        pUnit.value = p.unit || 'kg'; // Default to kg if not set
         pImage.value = p.image;
         formTitle.textContent = "تعديل المنتج";
         window.scrollTo(0, 0);

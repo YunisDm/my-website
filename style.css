@@ -541,3 +541,119 @@ a {
         width: 100%;
     }
 }
+
+/* Toast Notification */
+.toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--text-dark);
+    color: var(--white);
+    padding: 12px 25px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    font-family: var(--font-main);
+    z-index: 4000;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Quantity Modal Specifics */
+.qty-modal {
+    height: auto;
+    max-height: 80vh;
+    border-radius: 20px;
+    align-self: center;
+    /* Center in screen */
+    margin: auto;
+    position: relative;
+    transform: translateY(20px);
+    opacity: 0;
+}
+
+.cart-overlay.open .qty-modal {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.qty-content {
+    text-align: center;
+    padding: 20px 0;
+}
+
+.qty-content h4 {
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    color: var(--primary-dark);
+}
+
+.qty-options p {
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.weight-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.weight-btn {
+    padding: 15px;
+    background: var(--bg-light);
+    border: 2px solid #ddd;
+    border-radius: 12px;
+    font-family: var(--font-main);
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.weight-btn:hover,
+.weight-btn.selected {
+    border-color: var(--primary-color);
+    background: rgba(46, 204, 113, 0.1);
+    color: var(--primary-dark);
+}
+
+.qty-input-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.qty-btn-lg {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: none;
+    background: var(--text-dark);
+    color: var(--white);
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.qty-btn-lg:hover {
+    background: var(--primary-color);
+}
+
+#qty-input-piece {
+    width: 80px;
+    text-align: center;
+    font-size: 1.5rem;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    padding: 10px;
+}
