@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>علوة شفتة | Alwa Shefta</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="#" class="logo">
+                <i class="fa-solid fa-leaf"></i> علوة شفتة
+            </a>
+            <ul class="nav-links">
+                <li><a href="#home" class="active">الرئيسية</a></li>
+                <li><a href="#products">المنتجات</a></li>
+                <li><a href="#about">من نحن</a></li>
+                <li><a href="#contact">اتصل بنا</a></li>
+            </ul>
+            <div class="nav-icons">
+                <div class="cart-icon-wrapper" id="cart-btn">
+                    <i class="fa-solid fa-basket-shopping"></i>
+                    <span class="cart-count">0</span>
+                </div>
+            </div>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero" id="home">
+        <div class="hero-content">
+            <h1>طعم الطبيعة في منزلك</h1>
+            <p>أجود أنواع الفواكه والخضروات الطازجة تصلك يومياً.</p>
+            <a href="#products" class="btn primary-btn">تسوق الآن</a>
+        </div>
+        <div class="hero-image-container">
+            <!-- Image will be inserted here dynamically or via CSS -->
+            <img src="hero.png" alt="Fresh Fruits" id="hero-img" class="hero-img-element">
+        </div>
+    </header>
+
+    <!-- Products Section -->
+    <section class="products" id="products">
+        <div class="container">
+            <h2 class="section-title">محاصيلنا الطازجة</h2>
+
+            <!-- Filters -->
+            <div class="filters">
+                <button class="filter-btn active" data-filter="all">الكل</button>
+                <button class="filter-btn" data-filter="fruit">فواكه</button>
+                <button class="filter-btn" data-filter="vegetable">خضروات</button>
+            </div>
+
+            <div class="products-grid" id="products-grid">
+                <!-- Products will be injected here by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <h3>علوة شفتة</h3>
+                    <p>خيارك الأول للجودة والطزاجة.</p>
+                </div>
+                <div class="footer-links">
+                    <h4>روابط سريعة</h4>
+                    <ul>
+                        <li><a href="#home">الرئيسية</a></li>
+                        <li><a href="#products">المنتجات</a></li>
+                    </ul>
+                </div>
+                <div class="footer-social">
+                    <a href="#"><i class="fa-brands fa-facebook"></i></a>
+                    <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#"><i class="fa-brands fa-whatsapp"></i></a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 علوة شفتة. جميع الحقوق محفوظة.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Cart Modal -->
+    <div class="cart-overlay" id="cart-overlay">
+        <div class="cart-modal">
+            <div class="cart-header">
+                <h3>سلة المشتريات</h3>
+                <button class="close-cart" id="close-cart"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="cart-items" id="cart-items">
+                <!-- Cart items injected here -->
+                <p class="empty-cart-msg">السلة فارغة</p>
+            </div>
+            <div class="cart-footer">
+                <div class="total">
+                    <span>المجموع:</span>
+                    <span id="cart-total">0 د.ع</span>
+                </div>
+                <button class="btn primary-btn checkout-btn">إتمام الشراء</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div class="cart-overlay" id="checkout-overlay">
+        <div class="cart-modal checkout-modal">
+            <div class="cart-header">
+                <h3>إتمام الطلب</h3>
+                <button class="close-cart" id="close-checkout"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="checkout-form">
+                <div class="form-group">
+                    <label>الاسم الكامل</label>
+                    <input type="text" id="customer-name" placeholder="أدخل اسمك">
+                </div>
+                <div class="form-group">
+                    <label>رقم الهاتف</label>
+                    <input type="tel" id="customer-phone" placeholder="07xxxxxxxxx">
+                </div>
+                <div class="form-group">
+                    <label>العنوان</label>
+                    <textarea id="customer-address" placeholder="ادخل عنوانك بالتفصيل"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>الموقع الجغرافي</label>
+                    <button class="btn location-btn" id="get-location-btn">
+                        <i class="fa-solid fa-location-dot"></i> إرسال موقعي الحالي
+                    </button>
+                    <span id="location-status" class="status-text"></span>
+                </div>
+            </div>
+            <div class="cart-footer">
+                <div class="total-summary">
+                    <span>المجموع الكلي:</span>
+                    <span id="checkout-total">0 د.ع</span>
+                </div>
+                <button class="btn primary-btn whatsapp-btn" id="confirm-order-btn">
+                    <i class="fa-brands fa-whatsapp"></i> إرسال الطلب عبر واتساب
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
