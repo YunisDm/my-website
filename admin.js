@@ -74,8 +74,19 @@ function logout() {
 }
 
 // Render Products
+const adminSearch = document.getElementById('admin-search');
+
+// Search Listener
+if (adminSearch) {
+    adminSearch.addEventListener('input', renderAdminProducts);
+}
+
+// Render Products
 function renderAdminProducts() {
-    tableBody.innerHTML = products.map(p => `
+    const searchTerm = adminSearch ? adminSearch.value.trim().toLowerCase() : "";
+    const filtered = products.filter(p => p.name.toLowerCase().includes(searchTerm));
+
+    tableBody.innerHTML = filtered.map(p => `
         <tr>
             <td><img src="${p.image}" alt="${p.name}"></td>
             <td>${p.name}</td>

@@ -60,10 +60,16 @@
             <h2 class="section-title">محاصيلنا الطازجة</h2>
 
             <!-- Filters -->
-            <div class="filters">
-                <button class="filter-btn active" data-filter="all">الكل</button>
-                <button class="filter-btn" data-filter="fruit">فواكه</button>
-                <button class="filter-btn" data-filter="vegetable">خضروات</button>
+            <div class="filters-container">
+                <div class="search-wrapper">
+                    <i class="fa-solid fa-search"></i>
+                    <input type="text" id="search-input" placeholder="ابحث عن منتج...">
+                </div>
+                <div class="filters">
+                    <button class="filter-btn active" data-filter="all">الكل</button>
+                    <button class="filter-btn" data-filter="fruit">فواكه</button>
+                    <button class="filter-btn" data-filter="vegetable">خضروات</button>
+                </div>
             </div>
 
             <div class="products-grid" id="products-grid">

@@ -49,6 +49,23 @@ const SHOP_PHONE = "9647721325805"; // Correct international format (Iraq) w/o +
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
+    // Navigation Toggle
+    const hamburger = document.querySelector(".hamburger");
+    const navMenu = document.querySelector(".nav-links");
+
+    if (hamburger && navMenu) {
+        hamburger.addEventListener("click", () => {
+            hamburger.classList.toggle("active");
+            navMenu.classList.toggle("active");
+        });
+
+        // Close menu when clicking a link
+        document.querySelectorAll(".nav-links a").forEach(n => n.addEventListener("click", () => {
+            hamburger.classList.remove("active");
+            navMenu.classList.remove("active");
+        }));
+    }
+
     // Listen for real-time updates
     productsRef.on('value', (snapshot) => {
         const data = snapshot.val();
@@ -86,22 +103,42 @@ function renderProducts(items) {
     `).join('');
 }
 
+const searchInput = document.getElementById('search-input');
+let currentCategory = 'all';
+let currentSearchText = '';
+
 // Filter Logic
+function applyFilters() {
+    let filtered = products;
+
+    // Filter by Category
+    if (currentCategory !== 'all') {
+        filtered = filtered.filter(p => p.category === currentCategory);
+    }
+
+    // Filter by Search
+    if (currentSearchText) {
+        filtered = filtered.filter(p => p.name.includes(currentSearchText));
+    }
+
+    renderProducts(filtered);
+}
+
 filterBtns.forEach(btn => {
     btn.addEventListener('click', () => {
         // Active class
         filterBtns.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
 
-        // Filter
-        const category = btn.getAttribute('data-filter');
-        if (category === 'all') {
-            renderProducts(products);
-        } else {
-            const filtered = products.filter(p => p.category === category);
-            renderProducts(filtered);
-        }
+        // Update state
+        currentCategory = btn.getAttribute('data-filter');
+        applyFilters();
     });
+});
+
+searchInput.addEventListener('input', (e) => {
+    currentSearchText = e.target.value.trim();
+    applyFilters();
 });
 
 // Qty Modal Elements
