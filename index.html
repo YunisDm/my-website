@@ -158,45 +158,45 @@
                 </button>
             </div>
         </div>
-        <!-- Quantity Selection Modal -->
-        <div class="cart-overlay" id="qty-overlay">
-            <div class="cart-modal checkout-modal qty-modal">
-                <div class="cart-header">
-                    <h3>اختر الكمية</h3>
-                    <button class="close-cart" id="close-qty"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+
+    <!-- Quantity Selection Modal -->
+    <div class="cart-overlay" id="qty-overlay">
+        <div class="cart-modal checkout-modal qty-modal">
+            <div class="cart-header">
+                <h3>اختر الكمية</h3>
+                <button class="close-cart" id="close-qty"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div class="qty-content" id="qty-content">
+                <h4 id="qty-product-name">اسم المنتج</h4>
+
+                <!-- Kg Options -->
+                <div id="qty-options-kg" class="qty-options" style="display:none;">
+                    <p>اختر الوزن المطلوب:</p>
+                    <div class="weight-grid">
+                        <button class="weight-btn" onclick="selectWeight(0.25)">ربع كيلو (0.25)</button>
+                        <button class="weight-btn" onclick="selectWeight(0.50)">نصف كيلو (0.50)</button>
+                        <button class="weight-btn" onclick="selectWeight(0.75)">ثلاث ارباع (0.75)</button>
+                        <button class="weight-btn" onclick="selectWeight(1.00)">كيلو (1.00)</button>
+                    </div>
                 </div>
 
-                <div class="qty-content" id="qty-content">
-                    <h4 id="qty-product-name">اسم المنتج</h4>
-
-                    <!-- Kg Options -->
-                    <div id="qty-options-kg" class="qty-options" style="display:none;">
-                        <p>اختر الوزن المطلوب:</p>
-                        <div class="weight-grid">
-                            <button class="weight-btn" onclick="selectWeight(0.25)">ربع كيلو (0.25)</button>
-                            <button class="weight-btn" onclick="selectWeight(0.50)">نصف كيلو (0.50)</button>
-                            <button class="weight-btn" onclick="selectWeight(0.75)">ثلاث ارباع (0.75)</button>
-                            <button class="weight-btn" onclick="selectWeight(1.00)">كيلو (1.00)</button>
-                        </div>
+                <!-- Piece Options -->
+                <div id="qty-options-piece" class="qty-options" style="display:none;">
+                    <p>حدد العدد:</p>
+                    <div class="qty-input-wrapper">
+                        <button class="qty-btn-lg" onclick="adjustPiece(-1)">-</button>
+                        <input type="number" id="qty-input-piece" value="1" min="1" readonly>
+                        <button class="qty-btn-lg" onclick="adjustPiece(1)">+</button>
                     </div>
+                </div>
 
-                    <!-- Piece Options -->
-                    <div id="qty-options-piece" class="qty-options" style="display:none;">
-                        <p>حدد العدد:</p>
-                        <div class="qty-input-wrapper">
-                            <button class="qty-btn-lg" onclick="adjustPiece(-1)">-</button>
-                            <input type="number" id="qty-input-piece" value="1" min="1" readonly>
-                            <button class="qty-btn-lg" onclick="adjustPiece(1)">+</button>
-                        </div>
-                    </div>
-
-                    <div class="qty-footer">
-                        <button class="btn primary-btn" id="confirm-add-btn" style="width:100%">أضف للسلة</button>
-                    </div>
+                <div class="qty-footer">
+                    <button class="btn primary-btn" id="confirm-add-btn" style="width:100%">أضف للسلة</button>
                 </div>
             </div>
         </div>
-
     </div>
 
     <script src="script.js"></script>

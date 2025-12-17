@@ -619,11 +619,15 @@ a {
     transition: var(--transition);
 }
 
-.weight-btn:hover,
-.weight-btn.selected {
+.weight-btn:hover {
     border-color: var(--primary-color);
     background: rgba(46, 204, 113, 0.1);
-    color: var(--primary-dark);
+}
+
+.weight-btn.selected {
+    background-color: var(--primary-color);
+    color: var(--white);
+    border-color: var(--primary-color);
 }
 
 .qty-input-wrapper {

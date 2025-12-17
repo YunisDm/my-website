@@ -128,7 +128,9 @@ window.addToCart = (id) => {
     qtyOverlay.classList.add('open');
     document.querySelectorAll('.weight-btn').forEach(b => b.classList.remove('selected'));
 
-    if (product.unit === 'piece') {
+    const unit = product.unit || 'kg';
+
+    if (unit === 'piece') {
         qtyOptionsKg.style.display = 'none';
         qtyOptionsPiece.style.display = 'block';
         qtyInputPiece.value = 1;
@@ -136,36 +138,27 @@ window.addToCart = (id) => {
     } else {
         qtyOptionsKg.style.display = 'block';
         qtyOptionsPiece.style.display = 'none';
-        currentSelectedQty = 0; // User must select
-    }
-
-    // Disable add button until selection (for kg)
-    if (product.unit !== 'piece') {
-        // Optional: could auto select 1kg or disable btn
-        // Let's auto select nothing and wait for user? Or default to 1kg?
-        // User asked "choose quarter, half...", implies active choice.
+        // Default to 1 KG so user can just click add
+        selectWeight(1.00);
     }
 };
 
 window.selectWeight = (weight) => {
     currentSelectedQty = weight;
-    // Visually update buttons
+    // Update UI
     const buttons = document.querySelectorAll('.weight-btn');
     buttons.forEach(btn => {
-        if (btn.textContent.includes(weight)) { // Simple check, or check value attribute if added
+        // Clear all first
+        btn.classList.remove('selected');
+
+        // Check if this button corresponds to the weight
+        // We can check the onclick attribute or text
+        // Simplest without changing HTML: check if onclick string contains the weight
+        const onclickAttr = btn.getAttribute('onclick');
+        if (onclickAttr && onclickAttr.includes(weight.toString())) {
             btn.classList.add('selected');
-        } else {
-            // We can't easily check float in text without data attribute.
-            // Let's rely on event target closest logic if possible, 
-            // or just strict match if we added data attributes.
-            // Since I didn't add data attributes, I recall text content.
-            // Actually, better way:
-            btn.classList.remove('selected');
         }
     });
-    // Add selected class to the clicked one (event bubbling issue if I don't pass event)
-    // Let's use event.target
-    event.target.classList.add('selected');
 };
 
 window.adjustPiece = (delta) => {
@@ -384,3 +377,8 @@ function showToast(msg) {
     }, 3000);
 }
 
+// Make functions global for inline onclick handlers
+window.removeFromCart = removeFromCart;
+window.updateQty = updateQty;
+window.selectWeight = selectWeight;
+window.adjustPiece = adjustPiece;
